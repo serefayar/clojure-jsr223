@@ -1,0 +1,157 @@
+<project name="clojure-jsr223" basedir="." default="build">
+
+    <property name="src.dir"     value="src"/>
+    <property name="test.dir"    value="test"/>
+    <property name="samples.dir" value="samples"/>
+    <property name="script.dir"  value="scripts"/>
+    <property name="docs.dir"    value="docs"/>
+    <property name="build.dir"   value="build"/>
+    <property name="jar.dir"     value="${build.dir}/jar"/>
+    <property name="deploy.dir"  value="${build.dir}/${ant.project.name}"/>
+    <property name="clojure"     value="lib/clojure.jar"/>
+    <property name="contrib"     value="lib/clojure-contrib.jar"/>
+    <property name="junit"       value="lib/junit-4.6.jar"/>
+
+    <!--                                                -->
+    <!--  Default target: builds the library and docs.  -->
+    <!--                                                -->
+
+    <target name="build" depends="jar,docs"
+    	    description="Builds the Clojure JSR-223 project."/>
+
+    <!--                     -->
+    <!--  Cleans the build.  -->
+    <!--                     -->
+
+    <target name="clean"
+    	    description="Deletes all files and directories produced by the build.">
+        <delete dir="${build.dir}"/>
+        <delete dir="${docs.dir}"/>
+        <delete dir="classes"/>
+        <delete dir="bin"/>
+        <delete>
+            <fileset dir="." includes="TEST*.txt"/>
+        </delete>
+    </target>
+
+    <!--                                        -->
+    <!--  Compiles the sources and unit tests.  -->
+    <!--                                        -->
+
+    <target name="compile" depends="clean"
+    	    description="Compiles the API and unit tests.">
+        <!--  Create working directories.  -->
+        <mkdir dir="${build.dir}/${src.dir}-classes"/>
+        <mkdir dir="${build.dir}/${test.dir}-classes"/>
+
+        <!--  Compiles the API sources.  -->
+        <javac srcdir="${src.dir}" destdir="${build.dir}/${src.dir}-classes" source="1.6">
+            <classpath>
+                <pathelement location="${clojure}"/>
+                <pathelement location="${contrib}"/>
+            </classpath>
+        </javac>
+
+    	<!--  Compiles JUnit test sources.  -->
+        <javac srcdir="${test.dir}" destdir="${build.dir}/${test.dir}-classes" source="1.6">
+            <classpath>
+                <pathelement location="${build.dir}/${src.dir}-classes"/>
+                <pathelement location="${clojure}"/>
+                <pathelement location="${contrib}"/>
+                <pathelement location="${junit}"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <!--                        -->
+    <!--  Runs the unit tests.  -->
+    <!--                        -->
+
+    <target name="junit" depends="compile"
+    	    description="Runs the JUnit tests.">
+        <junit printsummary="yes" fork="yes" haltonfailure="yes">
+            <classpath>
+                <pathelement location="${build.dir}/${src.dir}-classes"/>
+                <pathelement location="${build.dir}/${test.dir}-classes"/>
+                <pathelement location="${clojure}"/>
+                <pathelement location="${contrib}"/>
+                <pathelement location="${junit}"/>
+                <pathelement location="${script.dir}"/>
+            </classpath>
+            <formatter type="plain"/>
+            <test name="clojure.contrib.jsr223.RunAllTests"/>
+        </junit>
+    </target>
+
+    <!--                                                  -->
+    <!--  Packages the compiled sources into a jar file.  -->
+    <!--  The library should haved passed all unit tests. -->
+    <!--                                                  -->
+
+    <target name="jar" depends="junit"
+            description="Compiles and library puts it in a .jar file.">
+        <mkdir dir="${jar.dir}"/>
+        <jar destfile="${jar.dir}/${ant.project.name}.jar" 
+             basedir="${build.dir}/${src.dir}-classes">
+            <manifest>
+                <attribute name="Class-Path" value="clojure.jar clojure-contrib.jar"/>
+            </manifest>
+            <service type="javax.script.ScriptEngineFactory"
+                     provider="clojure.contrib.jsr223.ClojureScriptEngineFactory"/>
+        </jar>
+    </target>
+
+    <!--                                -->
+    <!--  Generates the Javadoc files.  -->
+    <!--                                -->
+
+    <target name="docs"
+    	    description="Generates the API Javadoc files.">
+        <javadoc packagenames="clojure.*,javax.script.*" 
+                 destdir="${docs.dir}"
+                 source="1.6"
+                 package="true"
+                 defaultexcludes="yes"    
+                 author="true"            
+    	         windowtitle="Clojure Scripting Engine"
+                 doctitle="Clojure Scripting Engine"
+    	         header="Clojure Scripting Engine">
+            <sourcepath>
+                <pathelement location="src"/>
+                <pathelement location="/dev/tools/java/src"/>
+       	    </sourcepath>
+            <classpath>
+                <pathelement location="${clojure}"/>
+                <pathelement location="${clojure.contrib}"/>
+            </classpath>
+        </javadoc>
+    </target>
+
+    <!--                                       -->
+    <!--  Packages the library for deployment  -->
+    <!--                                       -->
+
+    <target name="package" depends="jar,docs"
+            description="Packages the library for deployment.">
+        <mkdir dir="${deploy.dir}"/>
+        <mkdir dir="${deploy.dir}/${docs.dir}"/>
+        <mkdir dir="${deploy.dir}/${src.dir}"/>
+        <mkdir dir="${deploy.dir}/${samples.dir}"/>
+
+        <copy file="epl-v10.html" todir="${deploy.dir}"/>
+        <copy file="${jar.dir}/${ant.project.name}.jar" todir="${deploy.dir}"/>
+        <copy todir="${deploy.dir}/${docs.dir}">
+            <fileset dir="${docs.dir}"/>
+        </copy>
+        <copy todir="${deploy.dir}/${src.dir}">
+            <fileset dir="${src.dir}"/>
+        </copy>
+        <copy todir="${deploy.dir}/${samples.dir}">
+            <fileset dir="${samples.dir}"/>
+	</copy>
+        <zip destfile="${deploy.dir}.zip"
+             basedir="${build.dir}"
+             includes="${ant.project.name}/**"/>
+	</target>
+
+</project>
