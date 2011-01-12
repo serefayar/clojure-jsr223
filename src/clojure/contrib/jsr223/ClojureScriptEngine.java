@@ -31,6 +31,8 @@ import javax.script.ScriptException;
 import javax.script.SimpleBindings;
 
 import clojure.lang.Compiler;
+import clojure.lang.IMapEntry;
+import clojure.lang.ISeq;
 import clojure.lang.LineNumberingPushbackReader;
 import clojure.lang.Namespace;
 import clojure.lang.RT;
@@ -70,10 +72,10 @@ class ClojureScriptEngine
 		
 		Bindings engineScope = getBindings(ScriptContext.ENGINE_SCOPE);
 		engineScope.put(ENGINE, "Clojure Scripting Engine");
-		engineScope.put(ENGINE_VERSION, "1.0");
+		engineScope.put(ENGINE_VERSION, "1.2");
 		engineScope.put(NAME, "Clojure");
 		engineScope.put(LANGUAGE, "Clojure");
-		engineScope.put(LANGUAGE_VERSION, "1.0");
+		engineScope.put(LANGUAGE_VERSION, "1.2");
 		
 		// Defaults used for compiling Clojure sources.
 		engineScope.put(SOURCE_PATH_KEY, null);
@@ -85,15 +87,40 @@ class ClojureScriptEngine
 	 * Bindings are interned in the user namespace.
 	 */
 	private void applyBindings(Bindings bindings) {
-		for (Map.Entry<String, Object> global : bindings.entrySet()) {
-		    String key = global.getKey();
+		for (Map.Entry<String, Object> entry : bindings.entrySet()) {
+		    String key = entry.getKey();
 		    if (key.indexOf('.') == -1) {
-		    	Object value = global.getValue();
-		    	Var.intern(USER_NS, Symbol.create(key), value);
+		    	String nsName = "user";
+		    	if (key.indexOf('/') >= 0) {
+		    		String[] names = key.split("/");
+		    		nsName = names[0];
+		    		key = names[1];
+		    	} 
+		    	Object value = entry.getValue();
+		    	Var.intern(Namespace.findOrCreate(Symbol.create(nsName.intern())), Symbol.create(key.intern()), value);
 		    }
 		}
 	}
 
+    private void collectBindings(Bindings bindings) {
+        for (ISeq seq = Namespace.all(); seq != null; seq = seq.next()) {
+            Namespace ns = (Namespace) seq.first();
+            String nsName = ns.toString();
+            if (nsName.startsWith("clojure")) continue;
+            
+	        for (ISeq mseq = ns.getMappings().seq(); mseq != null; mseq = mseq.next()) {
+	            IMapEntry e = (IMapEntry) mseq.first();
+	            String k = e.getKey().toString();
+	            Object val = e.getValue();
+	            if (val.toString().startsWith("#'clojure")) continue;
+            	if (val instanceof Var) {
+            		val = ((Var) val).deref();
+                	bindings.put(nsName + "/" + k, val);
+            	}       	
+	        }
+        }
+    }
+    
 	/**
 	 * {@inheritDoc}
 	 * <p>
@@ -155,13 +182,13 @@ class ClojureScriptEngine
 		Object result = null;
 		
 		try {
-			Bindings engineScope = context.getBindings(ScriptContext.ENGINE_SCOPE);
-			if (engineScope != null)
-				applyBindings(engineScope);
-			
 			Bindings globalScope = context.getBindings(ScriptContext.GLOBAL_SCOPE);
 			if (globalScope != null)
 				applyBindings(globalScope);
+			
+			Bindings engineScope = context.getBindings(ScriptContext.ENGINE_SCOPE);
+			if (engineScope != null)
+				applyBindings(engineScope);
 			
 			Var.pushThreadBindings(
 				RT.map(RT.CURRENT_NS, RT.CURRENT_NS.deref(),
@@ -171,6 +198,9 @@ class ClojureScriptEngine
 			
 			IN_NS.invoke(USER_SYM);
 			result = Compiler.load(reader);
+
+            if (globalScope != null)
+                collectBindings(engineScope);            
 		} catch (Exception e) {
 			throw new ScriptException(e);
 		} finally {
@@ -279,13 +309,13 @@ class ClojureScriptEngine
 		String format = "Function %s not found in namespace %s";
 		
 		try {
-			Bindings engineScope = context.getBindings(ScriptContext.ENGINE_SCOPE);
-			if (engineScope != null)
-				applyBindings(engineScope);
-			
 			Bindings globalScope = context.getBindings(ScriptContext.GLOBAL_SCOPE);
 			if (globalScope != null)
 				applyBindings(globalScope);
+			
+			Bindings engineScope = context.getBindings(ScriptContext.ENGINE_SCOPE);
+			if (engineScope != null)
+				applyBindings(engineScope);
 			
 			Var.pushThreadBindings(
 				RT.map(RT.CURRENT_NS, RT.CURRENT_NS.deref(),
@@ -310,6 +340,9 @@ class ClojureScriptEngine
 			    }
 				result = var.applyTo(RT.seq(args));
 			}
+			
+            if (globalScope != null)
+                collectBindings(engineScope);            
 		} catch (Exception e) {
 			throw new ScriptException(e);
 		} finally {
