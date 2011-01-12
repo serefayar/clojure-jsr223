@@ -1,5 +1,6 @@
 package jsr223;
 
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
@@ -11,7 +12,16 @@ public class EvalScript {
         // create a Clojure engine
         ScriptEngine engine = factory.getEngineByName("Clojure");
         // evaluate Clojure code from String
-        engine.eval("(println \"Hello, World\")");
+        engine.eval("(def foo \"World!\") (println \"Hello, \" foo)");
+        
+        System.out.printf("foo = %s\n", engine.get("user/foo"));
+        engine.put("user/foo", "planet");
+        engine.eval("(println \"Hello, \" foo)");
+        
+        engine.eval("(ns myns) (def foo \"xxx\")");
+        engine.put("myns/foo", "planet");
+        engine.eval("(println \"Hello, \" myns/foo)");
+        System.out.println(engine.getBindings(ScriptContext.ENGINE_SCOPE).keySet());
     }
     
 }
