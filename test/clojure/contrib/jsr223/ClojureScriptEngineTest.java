@@ -215,7 +215,7 @@ public class ClojureScriptEngineTest {
         Object result = inv.invokeMethod(null, "bar-ns/midpoint", 10, 20);
 		Assert.assertEquals(15, result);
 	}
-	
+/*	
 	@Test
 	public void compileLibrary() throws ScriptException {
 		Delete delete = new Delete();
@@ -252,7 +252,7 @@ public class ClojureScriptEngineTest {
 		file = new File("classes/converter.class");
 		Assert.assertTrue(file.exists());
 	}
-
+*/
 	/*+----------------------------------------------------------------------+
 	  |                                                                      | 
 	  | Negative tests.                                                      | 
