@@ -23,7 +23,7 @@ import javax.script.ScriptEngineFactory;
  * Implementation of a {@code ScriptEngineFactory} for Clojure.
  * 
  * @author Armando Blancas
- * @version 1.0
+ * @version 1.2
  */
 public class ClojureScriptEngineFactory 
 	implements ScriptEngineFactory {
@@ -68,7 +68,7 @@ public class ClojureScriptEngineFactory
 	/**
 	 * {@inheritDoc}
 	 * <p>
-	 * This method returns <i>1.0</i>.
+	 * This method returns <i>1.2</i>.
 	 */
 	public String getEngineVersion() {
 		return (String) engine.get(ScriptEngine.ENGINE_VERSION);
@@ -95,7 +95,7 @@ public class ClojureScriptEngineFactory
 	/**
 	 * {@inheritDoc}
 	 * <p>
-	 * This method returns <i>1.0</i>.
+	 * This method returns <i>1.2</i>.
 	 */
 	public String getLanguageVersion() {
 		return (String) engine.get(ScriptEngine.LANGUAGE_VERSION);

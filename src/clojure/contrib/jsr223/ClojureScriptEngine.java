@@ -43,14 +43,13 @@ import clojure.lang.Var;
  * Implementation of a {@code ScriptEngine} for Clojure.
  * 
  * @author Armando Blancas
- * @version 1.0
+ * @version 1.2
  */
 class ClojureScriptEngine 
 	extends AbstractScriptEngine 
 	implements Invocable, Compilable {
 
 	private static final Symbol    USER_SYM            = Symbol.create("user");
-	private static final Namespace USER_NS             = Namespace.findOrCreate(USER_SYM);
 	private static final Var       IN_NS               = RT.var("clojure.core", "in-ns");
 	private static final String    SOURCE_PATH_KEY     = "clojure.source.path";
 	private static final String    COMPILE_PATH_KEY    = "clojure.compile.path";
@@ -84,7 +83,8 @@ class ClojureScriptEngine
 	}
 	
 	/*
-	 * Bindings are interned in the user namespace.
+	 * Bindings are interned according to the format namespace/var,
+	 * or user/var if only the var is given.
 	 */
 	private void applyBindings(Bindings bindings) {
 		for (Map.Entry<String, Object> entry : bindings.entrySet()) {
@@ -102,6 +102,9 @@ class ClojureScriptEngine
 		}
 	}
 
+	/*
+	 * Bindings are collected in the format namespace/var.
+	 */
     private void collectBindings(Bindings bindings) {
         for (ISeq seq = Namespace.all(); seq != null; seq = seq.next()) {
             Namespace ns = (Namespace) seq.first();
