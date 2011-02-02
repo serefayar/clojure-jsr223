@@ -22,6 +22,10 @@ public class EvalScript {
         engine.put("myns/foo", "planet");
         engine.eval("(println \"Hello, \" myns/foo)");
         System.out.println(engine.getBindings(ScriptContext.ENGINE_SCOPE).keySet());
+        
+        engine.eval("(def bar 747)");
+        int bar = (Integer) engine.get("user/bar");
+        System.out.printf("bar from Clojure: %d\n", bar);
     }
     
 }
