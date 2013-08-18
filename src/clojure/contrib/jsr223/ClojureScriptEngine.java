@@ -63,18 +63,17 @@ class ClojureScriptEngine
 	 * 
 	 * @param sef The Script Engine Factory that created this instance.
 	 */
-	ClojureScriptEngine(ScriptEngineFactory sef) {
+	public ClojureScriptEngine(ScriptEngineFactory sef) {
 		if (sef == null)
 			throw new NullPointerException("factory is null");
 		
 		factory = sef;
-		
 		Bindings engineScope = getBindings(ScriptContext.ENGINE_SCOPE);
-		engineScope.put(ENGINE, "Clojure Scripting Engine");
-		engineScope.put(ENGINE_VERSION, "1.2");
-		engineScope.put(NAME, "Clojure");
-		engineScope.put(LANGUAGE, "Clojure");
-		engineScope.put(LANGUAGE_VERSION, "1.2");
+		engineScope.put(ENGINE, sef.getEngineName());
+		engineScope.put(ENGINE_VERSION, sef.getEngineVersion());
+		engineScope.put(NAME, sef.getEngineName());
+		engineScope.put(LANGUAGE, sef.getLanguageName());
+		engineScope.put(LANGUAGE_VERSION, sef.getLanguageVersion());
 		
 		// Defaults used for compiling Clojure sources.
 		engineScope.put(SOURCE_PATH_KEY, null);

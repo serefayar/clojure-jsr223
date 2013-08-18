@@ -7,7 +7,7 @@
 
 (ns clojure-loc
   (:import java.io.File)
-  (:use [clojure.contrib.duck-streams :only (reader)]))
+  (:use [clojure.java.io :only (reader)]))
 
 (defn non-blank? [line]
   (if (re-find #"\S" line) true false))

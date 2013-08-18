@@ -69,14 +69,14 @@ public class ClojureScriptEngineFactoryTest {
 	public void getEngineName() {
 		ClojureScriptEngineFactory f = new ClojureScriptEngineFactory();
 		String name = f.getEngineName();
-		Assert.assertEquals("Clojure Scripting Engine", name);
+		Assert.assertEquals("Clojure", name);
 	}
 	
 	@Test
 	public void getEngineVersion() {
 		ClojureScriptEngineFactory f = new ClojureScriptEngineFactory();
 		String name = f.getEngineVersion();
-		Assert.assertEquals("1.2", name);
+		Assert.assertEquals("1.5.1", name);
 	}
 	
 	@Test
@@ -98,7 +98,7 @@ public class ClojureScriptEngineFactoryTest {
 	public void getLanguageVersion() {
 		ClojureScriptEngineFactory f = new ClojureScriptEngineFactory();
 		String name = f.getLanguageVersion();
-		Assert.assertEquals("1.2", name);
+		Assert.assertEquals("1.5.1", name);
 	}
 	
 	@Test
@@ -140,8 +140,9 @@ public class ClojureScriptEngineFactoryTest {
 	public void getNames() {
 		ClojureScriptEngineFactory f = new ClojureScriptEngineFactory();
 		List<String> names = f.getNames();
-		Assert.assertEquals("Clojure", names.get(0));
-		Assert.assertEquals(1, names.size());
+        Assert.assertEquals("clojure", names.get(0));
+		Assert.assertEquals("Clojure", names.get(1));
+		Assert.assertEquals(2, names.size());
 	}
 	
 	@Test

@@ -1,3 +1,7 @@
+Fork of http://code.google.com/p/clojure-jsr223/ that loads the Clojure runtime
+lazily.
+------------------------------------------------------------------------------
+
 Copyright (c) 2009 Armando Blancas. All rights reserved.
  
 The use and distribution terms for this software are covered by the
@@ -10,7 +14,7 @@ the terms of this license.
 You must not remove this notice, or any other, from this software.
 ------------------------------------------------------------------------------
 
-To Build: ant
+To Build: ant or mvn
 
 (1) Requires Java 1.6
 

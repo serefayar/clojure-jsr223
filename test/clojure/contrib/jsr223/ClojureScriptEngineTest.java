@@ -30,8 +30,6 @@ import javax.script.SimpleBindings;
 import junit.framework.Assert;
 import junit.framework.JUnit4TestAdapter;
 
-import org.apache.tools.ant.taskdefs.Delete;
-import org.apache.tools.ant.taskdefs.Mkdir;
 import org.junit.Test;
 
 public class ClojureScriptEngineTest {
@@ -109,14 +107,14 @@ public class ClojureScriptEngineTest {
 	public void eval_predef() throws ScriptException {
 		ScriptEngine engine = new ClojureScriptEngineFactory().getScriptEngine();
 		Object result = engine.eval("(+ 3 4)");
-		Assert.assertEquals(7, result);
+		Assert.assertEquals(7L, result);
 	}
 	
 	@Test
 	public void eval_defn() throws ScriptException {
 		ScriptEngine engine = new ClojureScriptEngineFactory().getScriptEngine();
 		Object result = engine.eval("(defn mid [low high] (/ (+ low high) 2)) (mid 10 20)");
-		Assert.assertEquals(15, result);
+		Assert.assertEquals(15L, result);
 	}
 	
 	@Test
@@ -124,7 +122,7 @@ public class ClojureScriptEngineTest {
 		ScriptEngine engine = new ClojureScriptEngineFactory().getScriptEngine();
 		StringReader r = new StringReader("(defn mid [low high] (/ (+ low high) 2)) (mid 10 20)");
 		Object result = engine.eval(r);
-		Assert.assertEquals(15, result);
+		Assert.assertEquals(15L, result);
 	}
 	
 	@Test
@@ -132,7 +130,7 @@ public class ClojureScriptEngineTest {
 		ScriptEngine engine = new ClojureScriptEngineFactory().getScriptEngine();
 		FileReader r = new FileReader("./scripts/clojure-loc.clj");
 		Object result = engine.eval(r);
-		Assert.assertEquals(200, result);
+		Assert.assertEquals(200L, result);
 	}
 	
 	@Test
@@ -183,7 +181,7 @@ public class ClojureScriptEngineTest {
 		
         Invocable inv = (Invocable) engine;
         Object result = inv.invokeFunction("mid", 10, 20);
-		Assert.assertEquals(15, result);
+		Assert.assertEquals(15L, result);
 	}
 	
 	@Test
@@ -193,7 +191,7 @@ public class ClojureScriptEngineTest {
 		
         Invocable inv = (Invocable) engine;
         Object result = inv.invokeFunction("bar-ns/middle", 10, 20);
-		Assert.assertEquals(15, result);
+		Assert.assertEquals(15L, result);
 	}
 	
 	@Test
@@ -203,7 +201,7 @@ public class ClojureScriptEngineTest {
 		
         Invocable inv = (Invocable) engine;
         Object result = inv.invokeMethod(null, "midpoint", 10, 20);
-		Assert.assertEquals(15, result);
+		Assert.assertEquals(15L, result);
 	}
 	
 	@Test
@@ -213,7 +211,7 @@ public class ClojureScriptEngineTest {
 		
         Invocable inv = (Invocable) engine;
         Object result = inv.invokeMethod(null, "bar-ns/midpoint", 10, 20);
-		Assert.assertEquals(15, result);
+		Assert.assertEquals(15L, result);
 	}
 /*	
 	@Test
