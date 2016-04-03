@@ -1,18 +1,21 @@
 /*
  * Copyright (c) 2009 Armando Blancas. All rights reserved.
- * 
+ *
  * The use and distribution terms for this software are covered by the
  * Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0.php)
  * which can be found in the file epl-v10.html at the root of this distribution.
- * 
+ *
  * By using this software in any fashion, you are agreeing to be bound by
  * the terms of this license.
- * 
+ *
  * You must not remove this notice, or any other, from this software.
  */
 package clojure.contrib.jsr223;
 
-import java.io.IOException;
+import org.kohsuke.MetaInfServices;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -20,14 +23,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineFactory;
-
-import org.kohsuke.MetaInfServices;
-
 /**
  * Implementation of a {@code ScriptEngineFactory} for Clojure.
- * 
+ *
  * @author Armando Blancas
  * @version 1.2
  */
@@ -41,7 +39,7 @@ public class ClojureScriptEngineFactory
 
     /*
      * Default Constructor.
-     * 
+     *
      * Initializes the cached immutable lists and creates the local engine used
      * to return default settings.
      */
@@ -58,6 +56,7 @@ public class ClojureScriptEngineFactory
         list = new ArrayList<String>(2);
         list.add("application/clojure");
         list.add("text/clojure");
+        list.add("text/x+clojure");
         mimeTypes = Collections.unmodifiableList(list);
     }
 
@@ -148,7 +147,7 @@ public class ClojureScriptEngineFactory
      * {@inheritDoc}
      * <p>
      * This method returns a list with two values:
-     * 
+     *
      * <pre>
      * application/clojure
      * text/clojure
@@ -202,7 +201,7 @@ public class ClojureScriptEngineFactory
     /**
      * {@inheritDoc} It prints a Clojure program as a list of statements, each
      * in its own line:
-     * 
+     *
      * <pre>
      * (foo...)
      * (bar...)

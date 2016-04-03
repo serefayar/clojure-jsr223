@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.clojars.ato</groupId>
+  <groupId>org.clojars.sra</groupId>
   <artifactId>clojure-jsr223</artifactId>
-  <version>1.5.1</version>
+  <version>1.8.0</version>
   <name>clojure-jsr223</name>
   <description>Fork of clojure-jsr223 which loads the Clojure runtime only on demand.</description>
   <url>http://github.com/ato/clojure-jsr223/</url>
@@ -15,12 +15,12 @@
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
-      <version>1.5.1</version>
+      <version>1.8.0</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>4.12</version>
       <scope>test</scope>
     </dependency>
     <dependency>
